@@ -31,7 +31,7 @@ const DistrictAdminAccess = () => {
     }
     try {
       const response = await axios.post(
-        "http://localhost:3001/request-admin-access",
+        "https://smsb-pa7e.onrender.com/request-admin-access",
         formData,
         {
           headers: {

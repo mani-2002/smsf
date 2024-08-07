@@ -31,7 +31,7 @@ const Signup = () => {
     }
     try {
       const response = await axios.post(
-        "http://localhost:3001/signup",
+        "https://smsb-pa7e.onrender.com/signup",
         formData,
         {
           headers: {
