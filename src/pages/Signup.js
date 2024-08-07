@@ -309,11 +309,16 @@ const Signup = () => {
             <div style={{ margin: "1vh" }}>
               <button
                 type="submit"
-                className="btn btn-light"
+                className="btn btn-light d-flex align-items-center"
                 disabled={loading}
+                style={{ position: "relative" }}
               >
                 {loading ? (
-                  <div className="spinner-border text-light" role="status">
+                  <div
+                    className="spinner-border text-light"
+                    role="status"
+                    style={{ width: "1.5rem", height: "1.5rem" }}
+                  >
                     <span className="visually-hidden">Loading...</span>
                   </div>
                 ) : (

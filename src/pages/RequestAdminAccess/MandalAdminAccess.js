@@ -11,10 +11,12 @@ const MandalAdminAccess = () => {
   const [state, setState] = useState("");
   const [file, setFile] = useState(null);
   const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false); // Add loading state
   const requestFor = "Mandal Admin Access";
 
   const handleRequest = async (e) => {
     e.preventDefault();
+    setLoading(true); // Set loading to true when request starts
     const formData = new FormData();
     formData.append("name", name);
     formData.append("mobileNumber", mobileNumber);
@@ -47,6 +49,8 @@ const MandalAdminAccess = () => {
       setState("");
     } catch (error) {
       setMessage(error.response.data.message);
+    } finally {
+      setLoading(false); // Set loading to false when request completes
     }
   };
 
@@ -219,8 +223,18 @@ const MandalAdminAccess = () => {
               />
             </div>
             <div style={{ margin: "1vh" }}>
-              <button type="submit" className="btn btn-light">
-                Request Access
+              <button
+                type="submit"
+                className="btn btn-light"
+                disabled={loading}
+              >
+                {loading ? (
+                  <div className="spinner-border" role="status">
+                    <span className="visually-hidden">Loading...</span>
+                  </div>
+                ) : (
+                  "Request Access"
+                )}
               </button>
             </div>
             <div>{message && <div>{message}</div>}</div>

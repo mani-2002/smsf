@@ -11,10 +11,12 @@ const DistrictAdminAccess = () => {
   const [state, setState] = useState("");
   const [file, setFile] = useState(null);
   const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false); // Loading state
   const requestFor = "District Admin Access";
 
   const handleRequest = async (e) => {
     e.preventDefault();
+    setLoading(true); // Show spinner
     const formData = new FormData();
     formData.append("name", name);
     formData.append("mobileNumber", mobileNumber);
@@ -46,8 +48,21 @@ const DistrictAdminAccess = () => {
       setDistrict("");
       setState("");
     } catch (error) {
-      setMessage(error.response.data.message);
+      setMessage(error.response?.data?.message || "An error occurred");
+    } finally {
+      setLoading(false); // Hide spinner
     }
+  };
+
+  // Spinner style
+  const spinnerStyle = {
+    border: "4px solid rgba(0, 0, 0, 0.1)",
+    borderRadius: "50%",
+    borderTop: "4px solid white",
+    width: "40px",
+    height: "40px",
+    animation: "spin 1s linear infinite",
+    margin: "20px auto",
   };
   return (
     <div
@@ -222,6 +237,18 @@ const DistrictAdminAccess = () => {
                 Request Access
               </button>
             </div>
+            {loading && (
+              <div style={spinnerStyle}>
+                <style>
+                  {`
+                    @keyframes spin {
+                      0% { transform: rotate(0deg); }
+                      100% { transform: rotate(360deg); }
+                    }
+                  `}
+                </style>
+              </div>
+            )}
             <div>{message && <div>{message}</div>}</div>
           </form>
         </div>

@@ -8,7 +8,7 @@ import Dropdown from "react-bootstrap/Dropdown";
 const AdminDashboard = () => {
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
-  const [imageSrc, setImageSrc] = useState(null);
+  const [imageUrl, setImageUrl] = useState(null);
   const [currentDashboardContent, setCurrentDashboardContent] =
     useState("default");
 
@@ -23,7 +23,7 @@ const AdminDashboard = () => {
           const response = await axios.get(
             `http://localhost:3001/user_data/${loggedInUser}`
           );
-          setImageSrc(response.data.image);
+          setImageUrl(response.data.profile_pic);
         } catch (error) {
           console.error("Error fetching image:", error);
         }
@@ -287,9 +287,9 @@ const AdminDashboard = () => {
             <div>Welcome to State Management System</div>
             <div>
               <button className="btn">
-                {imageSrc ? (
+                {imageUrl ? (
                   <img
-                    src={imageSrc}
+                    src={imageUrl}
                     alt="User"
                     style={{
                       width: "9vh",
