@@ -31,7 +31,7 @@ const MandalAdminAccess = () => {
     }
     try {
       const response = await axios.post(
-        "https://smsb-pa7e.onrender.com/request-admin-access",
+        "http://localhost:3001/request-admin-access",
         formData,
         {
           headers: {

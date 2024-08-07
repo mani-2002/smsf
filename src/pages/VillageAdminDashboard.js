@@ -1,9 +1,7 @@
-import React from 'react'
+import React from "react";
 
 const VillageAdminDashboard = () => {
-  return (
-    <div>VillageAdminDashboard</div>
-  )
-}
+  return <div>VillageAdminDashboard</div>;
+};
 
-export default VillageAdminDashboard
+export default VillageAdminDashboard;

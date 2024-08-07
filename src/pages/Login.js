@@ -18,7 +18,7 @@ const Login = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await axios.post("https://smsb-pa7e.onrender.com/login", {
+      const response = await axios.post("http://localhost:3001/login", {
         userName,
         password,
       });
@@ -40,7 +40,7 @@ const Login = () => {
     }
   };
   useEffect(() => {
-    axios.get("https://smsb-pa7e.onrender.com/login").then((response) => {
+    axios.get("http://localhost:3001/login").then((response) => {
       if (response.data.loggedIn) {
         console.log("your session haven't expired yet...");
       }

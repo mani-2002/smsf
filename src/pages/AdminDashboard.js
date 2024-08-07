@@ -21,7 +21,7 @@ const AdminDashboard = () => {
       const fetchLoggedInUserDetails = async () => {
         try {
           const response = await axios.get(
-            `https://smsb-pa7e.onrender.com/user_data/${loggedInUser}`
+            `http://localhost:3001/user_data/${loggedInUser}`
           );
           setImageUrl(response.data.profile_pic);
         } catch (error) {
@@ -49,7 +49,7 @@ const AdminDashboard = () => {
 
   useEffect(() => {
     const fetchDistricts = async () => {
-      const response = await axios.get("https://smsb-pa7e.onrender.com/district-list");
+      const response = await axios.get("http://localhost:3001/district-list");
       setDistrictsList(response.data);
     };
     fetchDistricts();
@@ -63,7 +63,7 @@ const AdminDashboard = () => {
     setSelectedDistrict(dis);
     try {
       const response = await axios.get(
-        `https://smsb-pa7e.onrender.com/mandal-list/${dis}`
+        `http://localhost:3001/mandal-list/${dis}`
       );
       setMandalsList(response.data);
     } catch (error) {
@@ -76,7 +76,7 @@ const AdminDashboard = () => {
     setSelectedMandal(eventKey);
     const man = eventKey;
     const response = await axios.get(
-      `https://smsb-pa7e.onrender.com/village-list/${man}`
+      `http://localhost:3001/village-list/${man}`
     );
     setVillagesList(response.data);
   };
@@ -84,7 +84,7 @@ const AdminDashboard = () => {
   const handleVillageSelect = async (eventKey) => {
     setSelectedVillage(eventKey);
     const vil = eventKey;
-    const response = await axios.get(`https://smsb-pa7e.onrender.com/user-list/${vil}`);
+    const response = await axios.get(`http://localhost:3001/user-list/${vil}`);
     setUsersList(response.data);
     setUserTableVisibility(true);
   };
@@ -94,7 +94,7 @@ const AdminDashboard = () => {
   const fetchViewUserDetails = async (i) => {
     try {
       const response = await axios.get(
-        `https://smsb-pa7e.onrender.com/user-details/${i}`
+        `http://localhost:3001/user-details/${i}`
       );
       setUserDetails([response.data]); // Ensure userDetails is an array
     } catch (error) {
@@ -104,7 +104,7 @@ const AdminDashboard = () => {
 
   const handleUserDelete = async (id) => {
     try {
-      await axios.delete(`https://smsb-pa7e.onrender.com/user-delete/${id}`);
+      await axios.delete(`http://localhost:3001/user-delete/${id}`);
       alert("User Deleted Successfully");
     } catch (error) {
       alert("Failed to delete");
