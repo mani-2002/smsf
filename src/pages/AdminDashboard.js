@@ -96,7 +96,7 @@ const AdminDashboard = () => {
       const response = await axios.get(
         `http://localhost:3001/user-details/${i}`
       );
-      setUserDetails([response.data]); // Ensure userDetails is an array
+      setUserDetails([response.data]);
     } catch (error) {
       console.error("Error fetching user details:", error);
     }
