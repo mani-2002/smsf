@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
@@ -6,6 +6,7 @@ import axios from "axios";
 import Dropdown from "react-bootstrap/Dropdown";
 import ExistingAdminsList from "../../components/AdminDashboard/ExistingAdminsList";
 import ViewDistrictsMandalsVillages from "../../components/AdminDashboard/ViewDistrictsMandalsVillages";
+import EditAdminDetails from "../../components/AdminDashboard/EditAdminDetails";
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
@@ -14,6 +15,7 @@ const AdminDashboard = () => {
   const [currentDashboardContent, setCurrentDashboardContent] =
     useState("default");
   const [requestsForAdminAccess, setRequestsForAdminAccess] = useState([]);
+  const [loggedInUserDetails, setLoggedInUserDetails] = useState([]);
 
   useEffect(() => {
     if (!token) {
@@ -27,6 +29,7 @@ const AdminDashboard = () => {
             `http://localhost:3001/user_data/${loggedInUser}`
           );
           setImageUrl(response.data.profile_pic);
+          setLoggedInUserDetails(response.data);
         } catch (error) {
           console.error("Error fetching image:", error);
         }
@@ -129,7 +132,7 @@ const AdminDashboard = () => {
     }
   };
 
-  const handleDelete = async (requestId) => {
+  const handleRequestDelete = async (requestId) => {
     try {
       await axios.delete(`http://localhost:3001/delete-request/${requestId}`);
       setRequestsForAdminAccess(
@@ -156,6 +159,14 @@ const AdminDashboard = () => {
       console.error("Failed to accept the request");
     }
   };
+
+  const [isPopupVisible, setPopupVisible] = useState(false);
+  const popupRef = useRef(null);
+
+  const handleButtonClick = () => {
+    setPopupVisible(!isPopupVisible);
+  };
+
   return (
     <div>
       <div style={{ display: "flex", width: "100%", height: "100vh" }}>
@@ -328,11 +339,16 @@ const AdminDashboard = () => {
               backgroundColor: "black",
               color: "white",
               fontSize: "4vh",
+              flexDirection: "row",
             }}
           >
             <div>Welcome to State Management System</div>
-            <div>
-              <button className="btn">
+            <div style={{ margin: "0", padding: "0" }}>
+              <button
+                onClick={handleButtonClick}
+                className="btn"
+                style={{ top: "10px", right: "10px" }}
+              >
                 {imageUrl ? (
                   <img
                     src={imageUrl}
@@ -348,6 +364,68 @@ const AdminDashboard = () => {
                   <p>No Image Available</p>
                 )}
               </button>
+              {isPopupVisible && (
+                <div
+                  style={{
+                    position: "absolute",
+                    top: "13vh",
+                    right: "10px",
+                    backgroundColor: "black",
+                    padding: "2vh",
+                    boxShadow: "0 2px 10px rgba(0, 0, 0, 0.2)",
+                    color: "white",
+                    zIndex: 1000,
+                    width: "20%",
+                    fontSize: "3vh",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    flexDirection: "column",
+                  }}
+                  ref={popupRef}
+                >
+                  <div
+                    style={{
+                      position: "absolute",
+                      top: "-10px",
+                      right: "5vh",
+                      width: "0",
+                      height: "0",
+                      borderLeft: "10px solid transparent",
+                      borderRight: "10px solid transparent",
+                      borderBottom: "10px solid black",
+                    }}
+                  />
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      flexDirection: "column",
+                    }}
+                  >
+                    <div>{loggedInUserDetails.name}</div>
+                    <div>+91{loggedInUserDetails.mobile_number}</div>
+                    <div>Telangana State {loggedInUserDetails.username}</div>
+                    <div>
+                      <button
+                        className="btn btn-light"
+                        onClick={() => {
+                          setCurrentDashboardContent("edit-admin-details");
+                        }}
+                      >
+                        Edit Details
+                      </button>
+                      <button
+                        className="btn btn-light m-2"
+                        onClick={handleLogout}
+                      >
+                        Logout
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
           <div
@@ -908,7 +986,9 @@ const AdminDashboard = () => {
                           </button>
                           <button
                             className="btn btn-light w-75 m-1"
-                            onClick={() => handleDelete(request.request_id)}
+                            onClick={() =>
+                              handleRequestDelete(request.request_id)
+                            }
                           >
                             Reject Request
                           </button>
@@ -920,10 +1000,13 @@ const AdminDashboard = () => {
               </div>
             )}
             {currentDashboardContent === "existingadminslist" && (
-              <ExistingAdminsList />
+              <ExistingAdminsList role={loggedInUserDetails.role} />
             )}
             {currentDashboardContent === "viewdistrictsmandalsvillageslist" && (
               <ViewDistrictsMandalsVillages />
+            )}
+            {currentDashboardContent === "edit-admin-details" && (
+              <EditAdminDetails role={loggedInUserDetails.role} />
             )}
           </div>
         </div>

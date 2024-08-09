@@ -3,12 +3,19 @@ import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import axios from "axios";
+import UserListInDistricts from "../../components/DistrictAdminDashboard/UserListInDistricts";
+import RequestsForMandalAdminAccess from "../../components/DistrictAdminDashboard/RequestsForMandalAdminAccess";
+import ExistingMandalAdminsList from "../../components/DistrictAdminDashboard/ExistingMandalAdminsList";
 
 const DistrictAdminDashboard = () => {
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
   const [imageUrl, setImageUrl] = useState("");
   const [currentContent, setCurrentContent] = useState("default");
+  const [district, setDistrict] = useState("");
+  const [userDetails, setUserDetails] = useState(null);
+  const [userId, setUserId] = useState(null);
+
   useEffect(() => {
     if (!token) {
       navigate("/");
@@ -21,6 +28,7 @@ const DistrictAdminDashboard = () => {
             `http://localhost:3001/user_data/${loggedInUser}`
           );
           setImageUrl(response.data.profile_pic);
+          setDistrict(response.data.district);
         } catch (error) {
           console.error("Error fetching image:", error);
         }
@@ -29,9 +37,38 @@ const DistrictAdminDashboard = () => {
     }
   }, [navigate, token]);
 
+  useEffect(() => {
+    if (currentContent === "user-details" && userId !== null) {
+      const fetchUserDetails = async () => {
+        try {
+          const response = await axios.get(
+            `http://localhost:3001/user-details/${userId}`
+          );
+          setUserDetails(response.data);
+        } catch (error) {
+          console.error("Error fetching user details:", error);
+        }
+      };
+      fetchUserDetails();
+    }
+  }, [currentContent, userId]);
+
   const handleLogout = () => {
     localStorage.removeItem("token");
     navigate("/");
+  };
+
+  const handleViewUser = (userId) => {
+    setUserId(userId);
+    setCurrentContent("user-details");
+  };
+  const handleDeleteUser = async (userId) => {
+    setUserId(userId);
+    await axios.delete(`http://localhost:3001/user-delete/${userId}`);
+    alert("User Deleted Successfully");
+  };
+  const handleGoBack = () => {
+    setCurrentContent("user-list-in-district");
   };
 
   return (
@@ -229,16 +266,93 @@ const DistrictAdminDashboard = () => {
             {currentContent === "default" && <div>Tickets</div>}
             {currentContent === "tickets" && <div>Tickets</div>}
             {currentContent === "user-list-in-district" && (
-              <div>Users List in district</div>
+              <div style={{ width: "100%" }}>
+                <UserListInDistricts
+                  district={district}
+                  onViewUser={handleViewUser}
+                  onDeleteUser={handleDeleteUser}
+                />
+              </div>
             )}
             {currentContent === "requests-received-for-mandal-admin-access" && (
-              <div>Requests for mandal admin access</div>
+              <RequestsForMandalAdminAccess />
             )}
             {currentContent === "existing-mandal-admins" && (
-              <div>Existing mandal Admins</div>
+              <ExistingMandalAdminsList district={district} />
             )}
             {currentContent === "mandals-and-villages-list" && (
               <div>Mandals And Villages List</div>
+            )}
+            {currentContent === "user-details" && userDetails && (
+              <div style={{ width: "100%", padding: "3vh" }}>
+                <div style={{ display: "flex" }}>
+                  <div style={{ width: "20%" }}>
+                    <button className="btn btn-dark" onClick={handleGoBack}>
+                      go back
+                    </button>
+                  </div>
+                  <div
+                    style={{
+                      width: "80%",
+                      display: "flex",
+                      alignItems: "center",
+                      fontSize: "4vh",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    {userDetails.name} Details
+                  </div>
+                </div>
+                <div
+                  style={{
+                    border: "1px solid black",
+                    margin: "3vh 0 0 0",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <div style={{ width: "35%", padding: "4vh" }}>
+                    <img
+                      src={userDetails.profile_pic}
+                      alt=""
+                      style={{ height: "45vh", width: "45vh" }}
+                    />
+                  </div>
+                  <div style={{ width: "60%" }}>
+                    <div>
+                      <p>
+                        <b>Name:</b> {userDetails.name}
+                      </p>
+                    </div>
+                    <div>
+                      <p>
+                        <b>Mobile Number:</b> {userDetails.mobile_number}
+                      </p>
+                    </div>
+                    <div>
+                      <p>
+                        <b>Username:</b> {userDetails.username}
+                      </p>
+                    </div>
+                    <div>
+                      <p>
+                        <b>Village:</b> {userDetails.village}
+                      </p>
+                    </div>
+                    <div>
+                      <p>
+                        <b>Mandal:</b> {userDetails.mandal}
+                      </p>
+                    </div>
+                    <div>
+                      <p>
+                        <b>District:</b> {userDetails.district}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
             )}
           </div>
         </div>
