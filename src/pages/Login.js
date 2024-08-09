@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import { jwtDecode } from "jwt-decode";
 import { Spinner } from "react-bootstrap";
 import axios from "axios";
 
@@ -22,13 +21,18 @@ const Login = () => {
         userName,
         password,
       });
-      const { token } = response.data;
+      const { token,role } = response.data;
       localStorage.setItem("token", token);
-      const decodedToken = jwtDecode(token);
-      if (decodedToken.role === "admin") {
+      if (role === "admin") {
         navigate("/admin-dashboard");
-      } else {
+      } else if(role === 'user') {
         navigate("/user-dashboard");
+      } else if (role === 'dadmin'){
+        navigate('/district-admin-dashboard');
+      } else if(role === 'madmin'){
+        navigate('/mandal-admin-dashboard');
+      } else if(role === 'vadmin'){
+        navigate('/village-admin-dashboard');
       }
       setMessage(response.data.message);
       setUserName("");

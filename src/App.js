@@ -11,16 +11,20 @@ import Aboutus from "./pages/Aboutus";
 import Contactus from "./pages/Contactus";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
-import AdminDashboard from "./pages/AdminDashboard";
-import UserDashboard from "./pages/UserDashboard";
+import AdminDashboard from "./pages/Dashboards/AdminDashboard";
+import UserDashboard from "./pages/Dashboards/UserDashboard";
+import DistrictAdminDashboard from "./pages/Dashboards/DistrictAdminDashboard";
+import MandalAdminDashboard from "./pages/Dashboards/MandalAdminDashboard";
+import VillageAdminDashboard from "./pages/Dashboards/VillageAdminDashboard";
 import RequestForAdminAccess from "./pages/RequestAdminAccess/RequestForAdminAccess";
+import { jwtDecode } from "jwt-decode";
 
 const App = () => {
   const PrivateRoute = ({ element }) => {
-    const isAuthenticated = () => {
-      return localStorage.getItem("token") !== null;
-    };
-    if (isAuthenticated) {
+    const token = localStorage.getItem("token");
+    const decodedToken = token ? jwtDecode(token) : null;
+    const role = decodedToken ? decodedToken.role : null;
+    if (token && role) {
       return element;
     } else {
       return (
@@ -49,6 +53,19 @@ const App = () => {
             path="/user-dashboard"
             element={<PrivateRoute element={<UserDashboard />} />}
           />
+          <Route
+            path="/district-admin-dashboard"
+            element={<PrivateRoute element={<DistrictAdminDashboard />} />}
+          />
+          <Route
+            path="/mandal-admin-dashboard"
+            element={<PrivateRoute element={<MandalAdminDashboard />} />}
+          />
+          <Route
+            path="/village-admin-dashboard"
+            element={<PrivateRoute element={<VillageAdminDashboard />} />}
+          />
+
           <Route
             path="/request-for-admin-access"
             element={<RequestForAdminAccess />}

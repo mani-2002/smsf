@@ -50,7 +50,7 @@ const DistrictAdminAccess = () => {
     } catch (error) {
       setMessage(error.response?.data?.message || "An error occurred");
     } finally {
-      setLoading(false); // Hide spinner
+      setLoading(false);
     }
   };
 
